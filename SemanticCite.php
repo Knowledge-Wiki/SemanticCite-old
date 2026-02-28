@@ -2,7 +2,7 @@
 
 use SCI\HookRegistry;
 use SCI\Options;
-use SMW\ApplicationFactory;
+use SMW\Services\ServicesFactory as ApplicationFactory;
 
 /**
  * @see https://github.com/SemanticMediaWiki/SemanticCite/
@@ -91,23 +91,15 @@ class SemanticCite {
 		];
 
 		// #71
-		if ( version_compare( $GLOBALS['wgVersion'], '1.32', '<' ) ) {
-			$dependencies = [
-				'onoi.qtip',
-				'onoi.blobstore',
-				'onoi.util',
-				'ext.scite.styles',
-				'mediawiki.api.parse'
-			];
-		} else {
-			$dependencies = [
-				'onoi.qtip',
-				'onoi.blobstore',
-				'onoi.util',
-				'ext.scite.styles',
-				'mediawiki.api'
-			];
-		}
+		$dependencies = [
+			// @fix https://github.com/SemanticMediaWiki/SemanticCite/issues/142
+			'ext.smw.tooltip',
+			'onoi.blobstore',
+			'ext.scite.styles',
+			version_compare( $GLOBALS['wgVersion'], '1.32', '<' )
+				? 'mediawiki.api.parse'
+				: 'mediawiki.api'
+		];
 
 		$GLOBALS['wgResourceModules']['ext.scite.tooltip'] = [
 			'scripts' => [
